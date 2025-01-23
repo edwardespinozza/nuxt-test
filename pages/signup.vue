@@ -1,0 +1,11 @@
+<template>
+  <AuthFormulario
+    type="signup"
+    :title="$t('auth.signup.title')"
+    :description="$t('auth.signup.description')"
+    :buttonText="$t('auth.signup.button')"
+    :footerMessage="$t('auth.signup.footer_message')"
+    :footerLinkText="$t('auth.signup.footer_link')"
+    footerLinkUrl="login"
+  />
+</template>
