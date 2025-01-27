@@ -5,6 +5,7 @@
 .nitro
 .cache
 dist
+exdocker-compose.yml
 
 # Node dependencies
 node_modules
