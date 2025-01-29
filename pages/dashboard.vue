@@ -11,7 +11,7 @@
 
 <script setup lang="js">
   import { navigateTo } from "#app";
-  import { useAuthStore } from "~/stores/auth";
+  import { useAuthStore } from "~/stores/authStore";
 
   // Configura los metadatos de la página para utilizar el middleware 'auth'
   definePageMeta({

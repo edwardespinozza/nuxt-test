@@ -1,13 +1,13 @@
 // middleware/auth.ts
 import { navigateTo } from "#app";
-import { useAuthStore } from "~/stores/auth";
+import { useAuthStore } from "~/stores/authStore";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthStore();
 
   if (!authStore.isAuthenticated) {
     try {
-      await authStore.fetchUser();
+      await authStore.getUser();
     } catch (error) {
       // Opcional: Puedes manejar diferentes tipos de errores aquí
       console.error("Error al autenticar al usuario:", error);

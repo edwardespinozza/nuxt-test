@@ -1,5 +1,5 @@
 <template>
-  <AuthFormulario
+  <AuthForm
     type="login"
     :title="$t('auth.login.title')"
     :description="$t('auth.login.description')"

@@ -1,14 +1,22 @@
 // plugins/axios.ts
-import { useAuthStore } from "~/stores/auth";
+import { useAuthStore } from "~/stores/authStore";
 import axios from "axios";
 import { ApiError, NetworkError } from "~/services/errors";
 /* import { toast } from "#build/ui"; */
 
+
+declare module "#app" {
+  interface NuxtApp {
+    $api: typeof axios;
+  }
+}
+
 export default defineNuxtPlugin((nuxtApp) => {
+  const config = useRuntimeConfig(); // Accede a las variables de entorno
   const apiClient = axios.create({
-    //baseURL: "http://127.0.0.1:8000/api", // tu backend
+    baseURL: config.public.apiUrl, // tu backend
     //baseURL: "http://localhost:8000/api", // tu backend
-    baseURL: "https://api2.replanteados.com/api", // tu backend
+    //baseURL: "https://api2.replanteados.com/api", // tu backend
     withCredentials: true, // IMPORTANTE => permite que se envíen cookies
     timeout: 10000, // 10 segundos
   });
@@ -29,17 +37,20 @@ export default defineNuxtPlugin((nuxtApp) => {
   apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
+      console.log("entre al interceptor. error:", error);
       const authStore = useAuthStore();
-
+      
       if (error.response) {
+        console.log("entre al if error.response");
         console.log("entre al if de error.response");
         console.log("error.respones: ", error.response);
         
         //logica si el servidor responde con un error
         throw new ApiError(
+          error.response.data?.errorCode,
           error.response.data?.message || 'Error desconocido',
           error.response.status,
-          error.response.data
+          error.response.data?.data
         );
       } else {
         // Logica si el servidor no responde
@@ -49,6 +60,8 @@ export default defineNuxtPlugin((nuxtApp) => {
           description: 'No se pudo conectar con el servidor. Intente más tarde.',
           color: 'error'
         }); */
+        console.log("entre al else de if error.response");
+        
         throw new NetworkError('No se pudo conectar con el servidor.');
       }
 
@@ -83,6 +96,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   );
 
-  nuxtApp.provide("axios", apiClient);
+  nuxtApp.provide("api", apiClient);
 
 });

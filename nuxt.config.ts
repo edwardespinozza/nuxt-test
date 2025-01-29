@@ -3,7 +3,6 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: {
     enabled: true,
-
     timeline: {
       enabled: true
     }
@@ -14,6 +13,13 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     "pinia-plugin-persistedstate/nuxt",
   ],
+
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.API_URL
+    },
+  },
+
   routeRules: {
     "/": { redirect: "/en" },
   },

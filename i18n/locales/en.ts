@@ -31,6 +31,7 @@ export default {
       please_enter_a_password_with_at_least_8_characters: "Please enter a password with at least 8 characters.",
       global_error_title: "Something went wrong.",
       try_again_later: "Could not connect to the server. Please try again later.",
+      email_already_exists: "The email is already registered.",
     },
     invalid_email: "Invalid email",
     invalid_password: "Invalid password",

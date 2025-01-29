@@ -4,21 +4,13 @@ import { AxiosError } from "axios";
 import { defineStore } from "pinia";
 import { NetworkError } from "~/services/errors";
 import { ApiError } from "~/services/errors";
+import { useLocalePath } from "#i18n";
+
+import { AuthService } from "~/services/api/authService";
 
 interface User {
   id: number;
   email: string;
-}
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface RegisterCredentials {
-  email: string;
-  password: string;
-  // ... otros campos necesarios
 }
 
 export const useAuthStore = defineStore("auth", {
@@ -37,52 +29,45 @@ export const useAuthStore = defineStore("auth", {
       this.isLoggingOut = false;
     },
 
-    async login(credentials: LoginCredentials) {
-      
-      const { $axios } = useNuxtApp();
+    async login(LoginData: { email: string; password: string }) {
       try {
-        const { data } = await $axios.post("/auth/login", credentials);
-        //SI SE USA EL ACCESS TOKEN EN EL HEADER
-        this.accessToken = data.access_token;
-        await this.fetchUser();
-        navigateTo("/dashboard");
+        const { data } = await AuthService.login(LoginData);
+        this.accessToken = data.data.access_token;
+        await this.getUser();
+        navigateTo(useLocalePath()("dashboard"));
       } catch (error: any) {
         throw error;
       }
     },
 
-    async register(formData: any) {
-      const { $axios } = useNuxtApp();
-      console.log('formData desde register:', formData);
+    async register(RegisterData: { email: string; password: string; password2: string }) {
       try {
-        const { data } = await $axios.post("/auth/register", formData);
+        const { data } = await AuthService.register(RegisterData)
         console.log("Usuario registrado:", data);
-        navigateTo("/en/login");
-
+        navigateTo(useLocalePath()("login"));
       } catch (error: any) {
         throw error;
       }
     },
 
     async logout() {
-      const { $axios } = useNuxtApp();
       this.isLoggingOut = true;
       try {
-        await $axios.post("/auth/logout");
+        await AuthService.logout();
       } catch (error) {
         console.error("Console de Error en logout:", error);
       } finally {
         this.resetAuthState();
-        this.isLoggingOut = false;
-        navigateTo("/en/login");
+        useCookie('refresh_token').value = undefined;
+        navigateTo(useLocalePath()("login"));
       }
     },
 
-    async fetchUser() {
-      const { $axios } = useNuxtApp();
+    async getUser() {
       try {
-        const { data } = await $axios.get("/auth/user");
-        this.user = data;
+        const { data } = await AuthService.getUser();
+        console.log("data en getUser: ", data);
+        this.user = data.data;
       } catch (error) {
         console.error("Error al obtener los datos del usuario:", error);
         this.resetAuthState();
@@ -92,15 +77,13 @@ export const useAuthStore = defineStore("auth", {
 
     async refreshAccessToken() {
       if (this.isLoggingOut) return;
-      const { $axios } = useNuxtApp();
-
       try {
-        const { data } = await $axios.post("/auth/refresh");
+        const { data } = await AuthService.refreshAccessToken();
         this.accessToken = data.access_token;
       } catch (error) {
         console.error("Error refrescando token", error);
         this.resetAuthState();
-        navigateTo("/en/login");
+        navigateTo(useLocalePath()("login"));
       }
     },
   },
