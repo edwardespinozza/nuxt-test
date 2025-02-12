@@ -10,8 +10,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       await authStore.getUser();
     } catch (error) {
       // Opcional: Puedes manejar diferentes tipos de errores aquí
-      console.error("Error al autenticar al usuario:", error);
-      return navigateTo("/login");
+      return navigateTo(useLocalePath()("/login"))
     }
   }
 

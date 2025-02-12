@@ -15,8 +15,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig(); // Accede a las variables de entorno
   const apiClient = axios.create({
     baseURL: config.public.apiUrl, // tu backend
-    //baseURL: "http://localhost:8000/api", // tu backend
-    //baseURL: "https://api2.replanteados.com/api", // tu backend
+    //baseURL: "http://localhost:8000/api",
+    //baseURL: "https://api2.replanteados.com/api",
     withCredentials: true, // IMPORTANTE => permite que se envíen cookies
     timeout: 10000, // 10 segundos
   });
@@ -37,14 +37,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
-      console.log("entre al interceptor. error:", error);
-      const authStore = useAuthStore();
-      
+      const authStore = useAuthStore();      
       if (error.response) {
-        console.log("entre al if error.response");
-        console.log("entre al if de error.response");
-        console.log("error.respones: ", error.response);
-        
         //logica si el servidor responde con un error
         throw new ApiError(
           error.response.data?.errorCode,
@@ -54,13 +48,13 @@ export default defineNuxtPlugin((nuxtApp) => {
         );
       } else {
         // Logica si el servidor no responde
-        /* const toast = useToast()
+        console.log("entre al else de if error.response");
+        const toast = useToast()
         toast.add({
           title: 'Ocurrio un error.',
           description: 'No se pudo conectar con el servidor. Intente más tarde.',
-          color: 'error'
-        }); */
-        console.log("entre al else de if error.response");
+          color: 'red',
+        });
         
         throw new NetworkError('No se pudo conectar con el servidor.');
       }

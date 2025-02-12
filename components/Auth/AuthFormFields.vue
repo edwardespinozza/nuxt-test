@@ -20,33 +20,18 @@
     email: '',
     password: '',
     isSubmitting: false,
-    errorField: {
-      email: null as string | null,
-      password: null as string | null,
-    },
-    errorGlobal: {
-      isVisible: false as boolean,
-      title: null as string | null,
-      description: null as string | null,
-    }
+  });
+
+  const { feedback, resetFeedback, setGlobalFeedback } = useFormFeedback({
+    email: "",
+    password: "",
   });
   
   const authStore = useAuthStore();
 
-  function resetErrors() {
-    Object.assign(form.errorField, {
-      email: null,
-      password: null,
-    });
-    Object.assign(form.errorGlobal, {
-      isVisible: false,
-      title: null,
-      description: null
-    });
-  }
 
   async function onSubmit(event: FormSubmitEvent<AuthSchemaType>) {
-    resetErrors();
+    resetFeedback();
     // Deshabilitar el botón de submit para evitar clics repetidos
     form.isSubmitting = true;
     
@@ -64,39 +49,22 @@
         });
       }
     } catch (error: any) {
-      console.log("Entre al catch de error")
-      console.log(error);
-      
       if (error instanceof ApiError && error.data) {
-        console.log("Entre a la instancia de ApiError")
-        form.errorField.email = error.data.email ? t(`auth.errors.${error.errorCode}`) : null;
-        form.errorField.password = error.data.password?.[0] || null;
+        console.log("error data en catch de auth form: ", error.data);
+        
+        feedback.field.email = error.data.email ? t(`auth.errors.${error.errorCode}`) : undefined;
+        feedback.field.password = error.data.password?.[0] || null;
         if (error.data.detail) {
-          Object.assign(form.errorGlobal, {
-            isVisible: true,
-            title: "Ocurrió un problema.",
-            description: "El correo electrónico o la contraseña son incorrectos."
-          });
+          setGlobalFeedback("error", "Ocurrió un problema.", "El correo electrónico o la contraseña son incorrectos.")
         }
       } else {
-        console.log("Entre al else de error")
-        Object.assign(form.errorGlobal, {
-          isVisible: true,
-          title: t('auth.errors.global_error_title'),
-          description: t('auth.errors.try_again_later')
-        });
+        setGlobalFeedback("error", t('auth.errors.global_error_title'), t('auth.errors.try_again_later'))
       }
     } finally {
       // Rehabilitar el botón de submit después de que la solicitud haya terminado
       form.isSubmitting = false;
     }
   }
-
-  /* function handleClose() {
-    console.log("desde handle close");
-    
-    errors.global = false;
-  } */
 
   async function onError(event: FormErrorEvent) {
     console.log("disparado de de onError, el event es: ", event);
@@ -123,7 +91,7 @@
       name="email" 
       size="xl" 
       required 
-      :error="form.errorField.email || undefined"
+      :error="feedback.field.email || undefined"
     >
       <UInput
         v-model="form.email"
@@ -131,6 +99,7 @@
         @keydown.space.prevent 
         auto
         autocomplete="email"
+        id="email"
       />
     </UFormGroup>
 
@@ -139,19 +108,26 @@
       name="password"
       size="xl"
       required
-      :error="form.errorField.password || undefined"
+      :error="feedback.field.password || undefined"
     >
       <UInput
         v-model="form.password"
         type="password"
         class="w-full"
         @keydown.space.prevent
-        autocomplete="current-password"/>
+        autocomplete="current-password"
+        id="password"
+      />
+        
     </UFormGroup>
+
+    <NuxtLink :to="useLocalePath()('/forgot-password')" >
+      <p class="text-green-500 font-semibold hover:underline mt-4">¿Olvidaste tu Contraseña?</p>
+    </NuxtLink>
 
     <UButton type="submit" size="xl" block :loading="form.isSubmitting">
       {{ buttonText }}
     </UButton>
   </UForm>
-  <AlertError v-if=form.errorGlobal.isVisible :data="form.errorGlobal"/>
+  <AlertError v-if=feedback.global.isVisible type="error" :data="feedback.global"/>
 </template>
