@@ -44,7 +44,10 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await AuthService.register(RegisterData)
         console.log("Usuario registrado:", data);
-        navigateTo(useLocalePath()("login"));
+        const resend_instructions_token = data.data.resend_instructions_token;
+        console.log(resend_instructions_token);
+        
+        navigateTo(useLocalePath()(`/verify-email?token=${resend_instructions_token}&email=${RegisterData.email}`));
       } catch (error: any) {
         throw error;
       }

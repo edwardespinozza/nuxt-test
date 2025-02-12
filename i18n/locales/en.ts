@@ -23,6 +23,9 @@ export default {
     labels: {
       email: "Email",
       password: "Password",
+      new_password: "New password",
+      confirm_password: "Confirm password",
+      save_password: "Save password",
     },
     errors: {
       email_is_required: "Email is required",
