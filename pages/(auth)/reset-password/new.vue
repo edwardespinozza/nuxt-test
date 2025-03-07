@@ -33,9 +33,9 @@
     form.isSubmitting = true;
     try {
       if (form.password !== form.confirmPassword) {
-        feedback.field.password = t('auth.errors.password_mismatch');
-        feedback.field.confirmPassword = t('auth.errors.password_mismatch');
-        throw new Error('Passwords do not match');
+        /* feedback.field.password = t('error_codes.password_mismatch');
+        feedback.field.confirmPassword = t('error_codes.password_mismatch'); */
+        throw new Error('password_mismatch');
       }
       const token = route.query.token as string;
       console.log(token);
@@ -45,7 +45,22 @@
       // Si hay un error, lanzar una excepción
     } catch (error: any) {
       console.log("Error en la solicitud de restablecimiento de contraseña", error);
-      setGlobalFeedback("error", t('auth.errors.reset_failed'), error.message || t('auth.errors.unknown_error'))
+      
+      if (error.data) {
+        console.log("error en new.vue : ", error);  
+        // Si el error es de validacion
+        if (error.data.password) {
+          feedback.field.password = t(`error_codes.${error.data.password?.[0].code}`);
+        } else {
+          setGlobalFeedback("error", t('error_codes.global_error_title'), t('error_codes.link_expired_or_invalid'))
+        }
+      } else if (error.message == 'password_mismatch') {
+        setGlobalFeedback("error", t('error_codes.global_error_title'), t('error_codes.password_mismatch'))
+      } else {
+        setGlobalFeedback("error", t('error_codes.global_error_title'), t('error_codes.password_mismatch'))
+        /* setGlobalFeedback("error", t('auth.errors.reset_failed'), error.message || t('auth.errors.unknown_error')) */
+      }
+
     } finally {
       form.isSubmitting = false;
     }

@@ -20,7 +20,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     withCredentials: true, // IMPORTANTE => permite que se envíen cookies
     timeout: 10000, // 10 segundos
   });
-  
+
   // Bandera para prevenir múltiples intentos de refresh simultáneos
   let isRefreshing = false;
 
@@ -37,14 +37,17 @@ export default defineNuxtPlugin((nuxtApp) => {
   apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
-      const authStore = useAuthStore();      
+      const authStore = useAuthStore();
       if (error.response) {
+        console.log("Entre al error.response de AXIOS.TS-----");
+        console.log(error.response);
+        
         //logica si el servidor responde con un error
         throw new ApiError(
           error.response.data?.errorCode,
           error.response.data?.message || 'Error desconocido',
           error.response.status,
-          error.response.data?.data
+          error.response.data?.detail
         );
       } else {
         // Logica si el servidor no responde

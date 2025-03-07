@@ -1,4 +1,14 @@
 export default {
+  error_codes: {
+    global_error_title: "Ocurrio un problema.",
+    unique: "Ya existe una cuenta con este correo electrónico.",
+    email_already_exists: "El correo electrónico ya está registrado.",
+    password_too_short: "La contraseña debe contener al menos 8 caracteres.",
+    password_too_common: "Esta contraseña es demasiado común.",
+    password_entirely_numeric: "La contraseña no puede contener solo números.",
+    password_mismatch: "Las contraseñas no coinciden.",
+    link_expired_or_invalid: "El enlace de restablecimiento ha expirado o se ha generado uno nuevo."
+  },
   app_title: "aaaaa Adorable español",
   nav: {
     shows: "Programas",
@@ -26,6 +36,7 @@ export default {
       new_password: "Nueva contraseña",
       confirm_password: "Confirmar contraseña",
       save_password: "Guardar contraseña",
+      password_help: 'Debe tener al menos 8 caracteres, incluir una letra y un número.',
     },
     errors: {
       email_is_required: "El correo es obligatorio",

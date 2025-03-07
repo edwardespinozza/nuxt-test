@@ -1,5 +1,6 @@
 <template>
-    <div class="flex flex-col min-h-screen bg-gray-100">
+    <!-- <div class="flex flex-col min-h-screen bg-[#F2F2F2]"> -->
+    <div class="flex flex-col min-h-screen bg-white">
       <Navbar />
       <main class="flex-1 p-6 flex items-center justify-center">
         <slot />
