@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center">
     <!-- El logo ahora se adapta mejor al diseño horizontal -->
-    <NuxtLink to="/" class="block w-32">
+    <NuxtLink to="/" class="block w-24">
       <img 
         src="/img/arcux_logo_navbar.svg" 
         title="Arcux" 

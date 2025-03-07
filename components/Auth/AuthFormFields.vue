@@ -49,12 +49,21 @@
         });
       }
     } catch (error: any) {
-      if (error instanceof ApiError && error.data) {
-        console.log("error data en catch de auth form: ", error.data);
+      if (error instanceof ApiError) {
+        console.log("error en Auth form fields: ", error);
         
-        feedback.field.email = error.data.email ? t(`auth.errors.${error.errorCode}`) : undefined;
-        feedback.field.password = error.data.password?.[0] || null;
-        if (error.data.detail) {
+        // Si el error es de validacion
+        if (error.errorCode === "invalid") {
+          if (error.data.email?.[0].code === 'unique') {
+            feedback.field.email = t('error_codes.email_already_exists')
+          }
+          if (error.data.password) {
+            feedback.field.password = t(`error_codes.${error.data.password?.[0].code}`);
+          }
+        }
+        
+        // Si el error es de autenticacion
+        if (error.errorCode === "authentication_failed") {
           setGlobalFeedback("error", "Ocurrió un problema.", "El correo electrónico o la contraseña son incorrectos.")
         }
       } else {
@@ -68,7 +77,6 @@
 
   async function onError(event: FormErrorEvent) {
     console.log("disparado de de onError, el event es: ", event);
-    
     const errorField = event?.errors?.[0]?.id;
     if (errorField) {
       const element = document.getElementById(errorField);
@@ -76,6 +84,7 @@
       element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
+
 </script>
 
 <template>
@@ -108,6 +117,7 @@
       name="password"
       size="xl"
       required
+      :description="props.type === 'signup' ? t('auth.labels.password_help') : undefined"
       :error="feedback.field.password || undefined"
     >
       <UInput

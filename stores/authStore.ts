@@ -1,9 +1,4 @@
-// stores/auth.ts
-import { useNuxtApp } from "#app";
-import { AxiosError } from "axios";
 import { defineStore } from "pinia";
-import { NetworkError } from "~/services/errors";
-import { ApiError } from "~/services/errors";
 import { useLocalePath } from "#i18n";
 
 import { AuthService } from "~/services/api/authService";
@@ -30,12 +25,13 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async login(LoginData: { email: string; password: string }) {
-      try {
+      try {        
         const { data } = await AuthService.login(LoginData);
-        this.accessToken = data.data.access_token;
+        this.accessToken = data.access;
         await this.getUser();
         navigateTo(useLocalePath()("dashboard"));
       } catch (error: any) {
+        console.log("error: ", error);
         throw error;
       }
     },
@@ -49,6 +45,7 @@ export const useAuthStore = defineStore("auth", {
         
         navigateTo(useLocalePath()(`/verify-email?token=${resend_instructions_token}&email=${RegisterData.email}`));
       } catch (error: any) {
+        console.log("error: ", error);
         throw error;
       }
     },
@@ -69,10 +66,9 @@ export const useAuthStore = defineStore("auth", {
     async getUser() {
       try {
         const { data } = await AuthService.getUser();
-        console.log("data en getUser: ", data);
-        this.user = data.data;
+        this.user = data;
       } catch (error) {
-        console.error("Error al obtener los datos del usuario:", error);
+        console.error("Error en getUser:", error);
         this.resetAuthState();
         throw new Error("No se pudieron obtener los datos del usuario.");
       }

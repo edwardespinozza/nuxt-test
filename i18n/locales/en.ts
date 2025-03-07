@@ -1,4 +1,15 @@
 export default {
+  error_codes: {
+    global_error_title: "Something went wrong.",
+    unique: "An account with this email already exists.",
+    email_already_exists: "The email is already registered.",
+    password_too_short: "The password must contain at least 8 characters.",
+    password_too_common: "This password is too common.",
+    password_entirely_numeric: "The password cannot contain only numbers.",
+    password_mismatch: "Passwords do not match.",
+    link_expired_or_invalid: "The reset link has expired or a new link has been generated."
+
+  },
   app_title: "aaaaa Andorable",
   nav: {
     shows: "Shows",
@@ -26,6 +37,7 @@ export default {
       new_password: "New password",
       confirm_password: "Confirm password",
       save_password: "Save password",
+      password_help: 'Must be 8+ characters, with a letter and a number.'
     },
     errors: {
       email_is_required: "Email is required",

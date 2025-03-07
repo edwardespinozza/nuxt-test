@@ -1,7 +1,9 @@
 <template>
-  <header class="p-4 flex justify-between items-center">
-    <NavLogo />
-    <NavLinks />
+  <header class="w-full p-6 flex items-center justify-center bg-white">
+    <div class="w-full flex justify-between items-center max-w-[1600px]">
+      <NavLogo />
+      <NavLinks />
+    </div>
     
   </header>
 </template>
