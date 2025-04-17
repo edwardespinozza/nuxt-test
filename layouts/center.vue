@@ -1,8 +1,8 @@
 <template>
     <!-- <div class="flex flex-col min-h-screen bg-[#F2F2F2]"> -->
-    <div id="container" class="flex flex-col min-h-screen bg-white">
+    <div class="flex flex-col min-h-screen bg-white">
       <Navbar />
-      <main class="flex-1 p-6 flex justify-center mx-10">
+      <main class="flex-1 p-6 flex items-center justify-center">
         <slot />
       </main>      
       <footer class="bg-primary text-white p-4 text-center">
@@ -18,9 +18,3 @@
     titleTemplate: "%s - Intro Nuxt",
   });
 </script>
-
-<style>
-html {
-    overflow-y: scroll;
-}
-</style>
