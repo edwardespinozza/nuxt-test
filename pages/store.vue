@@ -6,53 +6,31 @@
       
       <!-- Filtros -->
       <aside class="md:col-span-1 space-y-6">
-        
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Filtros</h2>
-          <div className="space-y-3">
-            <label className="block">
-              <input type="checkbox" className="mr-2" />
-              En oferta
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" />
-              Envío gratis
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" />
-              Mejor valorados
-            </label>
-          </div>
-        </div>
-        
-        
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Categorias</h2>
-          <div className="space-y-3">
-            <label className="block">
-              <input type="checkbox" className="mr-2" />
-              En oferta
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" />
-              Envío gratis
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" />
-              Mejor valorados
-            </label>
-          </div>
-        </div>
+        <div v-if="taxonomiesLoading">🔄 Cargando categorías...</div>
 
+        <div v-else-if="taxonomiesError">❌ {{ taxonomiesError }}</div>
+          <div v-else>
+            <ul>
+              <li v-for="taxonomy in taxonomies" :key="taxonomy.id">
+                {{ taxonomy.name }}
+                <ul>
+                  <li v-for="category in taxonomy.categories" :key="category.id">
+                    {{ category.name }}
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
 
 
       </aside>
       
       <!-- Lista de productos -->
       <section class="md:col-span-4">
-        <div class="mb-6">
+        <div class="mb-6" id="product-listing-top">
           <h2 className="text-2xl font-semibold">Todos los cursos</h2>
           <p className="text-lg font-normal text-gray-500">108 Resultados</p>
+          <USelectMenu v-model="selected" :options="people" />
         </div>
 
         <div class="grid gap-y-8 gap-x-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -60,7 +38,7 @@
             v-for="product in productos" 
             :key="product.id"
             :title="product.title"
-            :cover="product.cover"
+            :cover="product.thumbnail_url"
           /> 
         </div>
 
@@ -70,11 +48,11 @@
             v-model="page"
             size="xl"
             :page-count="10"
-            :total="items"
+            :total="total"
             :to="(page: number) => ({
               query: { ...$route.query, page },
               // Hash is specified here to prevent the page from scrolling to the top
-              hash: '#links'
+              hash: '#product-listing-top'
             })"
           />
         </div>
@@ -102,44 +80,63 @@
 
   import { useRoute, useRouter } from "vue-router"
 
-/*   import { useCursos } from "@/composables/useCursos" */
+
+  type Taxonomy = {
+    id: number;
+    name: string;
+    slug: string;
+    categories: Array<{
+      id: number;
+      name: string;
+      slug: string;
+      parent: number | null;
+    }>;
+  };
+
+  type ApiResponse = {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: Taxonomy[];
+  };
+
+  const { data: rawTaxonomies, status, error: taxonomiesError } = await useAsyncData<ApiResponse>('taxonomies', () => 
+    $fetch('http://127.0.0.1:8000/api/taxonomies/categories/')
+  );
+
+  const taxonomies = computed(() => rawTaxonomies.value?.results || []);
+  const taxonomiesLoading = computed(() => status.value === 'pending' || status.value === 'idle');
 
   const route = useRoute()
   const router = useRouter()
-  const { productos, fetchProductos, loading, error } = useProductos();
+  const { productos, fetchProductos, total, loading, error } = useProductos();
 
   const filters = computed(() => ({
     category: route.query.category as string || '',
     level: route.query.level as string || '',
     price: route.query.price ? Number(route.query.price) : undefined,
-    paged: route.query.page ? Number(route.query.page) : undefined,
+    page: route.query.page ? Number(route.query.page) : undefined,
+    search : route.query.q as string || "",
     perPage: 20,
     dataType: 'course'
   }));
   const page = computed(() => Number(route.query.page) || 1) // ⬅️ Ahora obtenemos la página de la URL
 
-  const items = ref(1200)
-
   // Llamar a la API cuando cambian los filtros
   watch(filters, async () => {
-    console.log("Aplicando filtros:", filters.value);
     await fetchProductos(filters.value);
-    console.log('ejecute fetchProducts');
-    console.log("productos: ", productos.value);
   }, { immediate: true }); // `immediate: true` para ejecutar la primera vez al cargar la página
 
-  console.log("error: ", error.value);
-  watch(productos, (newVal) => {
-    console.log("Productos actualizados en el page:", newVal);
-  });
+  const people = ['Wade Cooper', 'Arlene Mccoy', 'Devon Webb', 'Tom Cook', 'Tanya Fox', 'Hellen Schmidt', 'Caroline Schultz', 'Mason Heaney', 'Claudie Smitham', 'Emil Schaefer']
+  const selected = ref(people[0])
+
+</script>
+
 
   // Variables reactivas para los filtros (se sincronizan con la URL)
   /* const searchQuery = ref(route.query.q || "")
   const category = ref(route.query.category || "")
-  
-  console.log(searchQuery.value);
-  console.log(category.value);
-  console.log(page.value); */
+
 
   // Función para actualizar la URL sin recargar la página
   /* const updateFilters = () => {
@@ -150,35 +147,3 @@
 /*   const changePage = (newPage) => {
     router.push({ query: { ...route.query, page: newPage } })
   } */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const products = [
-  {
-    id: 1,
-    name: "Auriculares Bluetooth",
-    price: "$29.99",
-    image: "https://via.placeholder.com/300x200?text=Auriculares",
-  },
-  {
-    id: 2,
-    name: "Teclado Mecánico",
-    price: "$79.99",
-    image: "https://via.placeholder.com/300x200?text=Teclado",
-  },
-];
-</script>

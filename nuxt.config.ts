@@ -1,6 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
+  
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.API_URL
+    },
+  },
+
   devtools: {
     enabled: true,
     timeline: {
@@ -14,11 +21,6 @@ export default defineNuxtConfig({
     "pinia-plugin-persistedstate/nuxt",
   ],
 
-  runtimeConfig: {
-    public: {
-      apiUrl: process.env.API_URL
-    },
-  },
 
   routeRules: {
     "/": { redirect: "/en" },

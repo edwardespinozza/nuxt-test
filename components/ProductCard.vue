@@ -2,12 +2,12 @@
 
   <!-- <div class="w-full rounded-large bg-white ring-1 ring-gray-200 shadow-sm divide-y divide-gray-200"> -->
   <!-- <div class="w-full rounded-2xl bg-white divide-y divide-gray-200 border border-gray-300 p-3 drop-shadow-lg"> -->
-  <div class="w-full rounded-2xl bg-white">
-    <div class="aspect-w-16 aspect-h-9 border border-gray-100 rounded-t-xl bg-gray-100">
+  <div class="w-full min-w-[300px] rounded-2xl bg-white">
+    <div class="w-full aspect-w-16 aspect-h-10 border border-gray-100 rounded-t-xl bg-gray-100">
       <img 
         :src="cover" 
         :alt="title"
-        class="w-full object-cover"
+        class="object-cover rounded-lg"
       />
     </div>
 
@@ -30,10 +30,10 @@
         <span class="text-sm text-gray-500">4,9 (500)</span>
       </div>
 
-      <p class="text-md">
+      <!-- <p class="text-md">
         <span class="font-medium text-lg">S/39.00</span>
         <span class="text-gray-400 ml-2 line-through">S/179.00</span>
-      </p>
+      </p> -->
 
       <!-- <UButton type="submit" size="xl" block color="black">
         Comprar ahora
